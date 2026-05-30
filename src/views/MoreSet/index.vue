@@ -18,14 +18,14 @@
         </div>
         <div class="version">
           <div class="num">v&nbsp;{{ config.version }}</div>
-          <el-tooltip content="Github 源代码仓库" placement="right" :show-arrow="false">
-            <github-one class="github" theme="outline" size="24" @click="jumpTo(config.github)" />
+          <el-tooltip content="源代码仓库" placement="right" :show-arrow="false">
+            <github-one class="github" theme="outline" size="24" @click="jumpTo(projectRepo)" />
           </el-tooltip>
         </div>
         <el-card class="update">
           <template #header>
             <div class="card-header">
-              <span>更新日志</span>
+              <span>{{ settingLogTitle }}</span>
             </div>
           </template>
           <div class="upnote">
@@ -43,7 +43,7 @@
       <el-col :span="12" class="right">
         <div class="title">
           <setting-two theme="filled" size="28" fill="#ffffff60" />
-          <span class="name">全局设置</span>
+          <span class="name">{{ settingTitle }}</span>
         </div>
         <Set />
       </el-col>
@@ -56,36 +56,30 @@ import { CloseOne, SettingTwo, GithubOne, AddOne, Bug } from "@icon-park/vue-nex
 import { mainStore } from "@/store";
 import Set from "@/components/Set.vue";
 import config from "@/../package.json";
+import updateLogs from "@/assets/updateLogs.json";
 
 const store = mainStore();
 const closeShow = ref(false);
+const projectRepo = import.meta.env.VITE_PROJECT_REPO || config.github;
+const settingTitle = import.meta.env.VITE_SETTING_TITLE || "全局设置";
+const settingLogTitle = import.meta.env.VITE_SETTING_LOG_TITLE || "更新日志";
 
 // 站点链接
 const siteUrl = computed(() => {
   const url = import.meta.env.VITE_SITE_URL;
-  if (!url) return "imsyy.top".split(".");
-  // 判断协议前缀
-  if (url.startsWith("http://") || url.startsWith("https://")) {
-    const urlFormat = url.replace(/^(https?:\/\/)/, "");
-    return urlFormat.split(".");
-  }
-  return url.split(".");
+  const normalizedUrl = url
+    ? url.replace(/^(https?:\/\/)/, "")
+    : "ice666.ccwu.cc";
+  const parts = normalizedUrl.split(".");
+  return [parts[0], parts.slice(1).join(".")];
 });
 
 // 更新日志
-const upData = reactive({
-  new: [
-    "采用 Vue 进行重构",
-    "音乐歌单支持快速自定义",
-    "壁纸支持个性化设置",
-    "音乐播放器支持音量控制",
-  ],
-  fix: ["修复天气 API", "时光胶囊显示错误", "移动端动画及细节", "图标更换为 IconPark"],
-});
+const upData = reactive(updateLogs);
 
 // 跳转源代码仓库
 const jumpTo = (url) => {
-  window.open(url);
+  window.open(url, "_blank");
 };
 </script>
 
@@ -137,13 +131,14 @@ const jumpTo = (url) => {
         width: 100%;
         height: 260px;
         min-height: 140px;
+        white-space: nowrap;
         .bg {
-          font-size: 5rem;
+          font-size: clamp(3.2rem, 5.6vw, 5rem);
         }
 
         .sm {
           margin-left: 6px;
-          font-size: 2rem;
+          font-size: clamp(1.15rem, 2vw, 2rem);
         }
 
         @media (max-width: 990px) {

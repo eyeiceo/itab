@@ -4,7 +4,7 @@
     <!-- Logo -->
     <div class="logo">
       <img class="logo-img" :src="siteLogo" alt="logo" />
-      <div :class="{ name: true, 'text-hidden': true, long: siteUrl[0].length >= 6 }">
+      <div :class="{ name: true, long: siteUrl[0].length + siteUrl[1].length >= 12 }">
         <span class="bg">{{ siteUrl[0] }}</span>
         <span class="sm">.{{ siteUrl[1] }}</span>
       </div>
@@ -41,13 +41,11 @@ const siteLogo = import.meta.env.VITE_SITE_MAIN_LOGO;
 // 站点链接
 const siteUrl = computed(() => {
   const url = import.meta.env.VITE_SITE_URL;
-  if (!url) return "imsyy.top".split(".");
-  // 判断协议前缀
-  if (url.startsWith("http://") || url.startsWith("https://")) {
-    const urlFormat = url.replace(/^(https?:\/\/)/, "");
-    return urlFormat.split(".");
-  }
-  return url.split(".");
+  const normalizedUrl = url
+    ? url.replace(/^(https?:\/\/)/, "")
+    : "ice666.ccwu.cc";
+  const parts = normalizedUrl.split(".");
+  return [parts[0], parts.slice(1).join(".")];
 });
 
 // 简介区域文字
@@ -104,6 +102,7 @@ watch(
       padding-left: 22px;
       transform: translateY(-8px);
       font-family: "Pacifico-Regular";
+      white-space: nowrap;
 
       .bg {
         font-size: 5rem;
@@ -116,6 +115,14 @@ watch(
           display: none;
         }
       }
+      &.long {
+        .bg {
+          font-size: 4.05rem;
+        }
+        .sm {
+          font-size: 1.45rem;
+        }
+      }
     }
     @media (max-width: 768px) {
       .logo-img {
@@ -124,7 +131,15 @@ watch(
       .name {
         height: 128px;
         .bg {
-          font-size: 4.5rem;
+          font-size: 4.2rem;
+        }
+        &.long {
+          .bg {
+            font-size: 3.55rem;
+          }
+          .sm {
+            font-size: 1.25rem;
+          }
         }
       }
     }

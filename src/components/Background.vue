@@ -12,7 +12,7 @@
     <div :class="store.backgroundShow ? 'gray hidden' : 'gray'" />
     <Transition name="fade" mode="out-in">
       <a
-        v-if="store.backgroundShow && store.coverType != '3'"
+        v-if="store.backgroundShow"
         class="down"
         :href="bgUrl"
         target="_blank"
@@ -31,22 +31,11 @@ const store = mainStore();
 const bgUrl = ref(null);
 const imgTimeout = ref(null);
 const emit = defineEmits(["loadComplete"]);
-
-// 壁纸随机数
-// 请依据文件夹内的图片个数修改 Math.random() 后面的第一个数字
-const bgRandom = Math.floor(Math.random() * 10 + 1);
+const customBg = import.meta.env.VITE_SITE_BACKGROUND || "/images/custom-background.jpg";
 
 // 更换壁纸链接
-const changeBg = (type) => {
-  if (type == 0) {
-    bgUrl.value = `/images/background${bgRandom}.jpg`;
-  } else if (type == 1) {
-    bgUrl.value = "https://api.dujin.org/bing/1920.php";
-  } else if (type == 2) {
-    bgUrl.value = "https://api.vvhan.com/api/wallpaper/views";
-  } else if (type == 3) {
-    bgUrl.value = "https://api.vvhan.com/api/wallpaper/acg";
-  }
+const changeBg = () => {
+  bgUrl.value = customBg;
 };
 
 // 图片加载完成
@@ -76,20 +65,12 @@ const imgLoadError = () => {
       fill: "#efefef",
     }),
   });
-  bgUrl.value = `/images/background${bgRandom}.jpg`;
+  bgUrl.value = customBg;
 };
-
-// 监听壁纸切换
-watch(
-  () => store.coverType,
-  (value) => {
-    changeBg(value);
-  },
-);
 
 onMounted(() => {
   // 加载壁纸
-  changeBg(store.coverType);
+  changeBg();
 });
 
 onBeforeUnmount(() => {
@@ -118,8 +99,9 @@ onBeforeUnmount(() => {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center center;
     backface-visibility: hidden;
-    filter: blur(20px) brightness(0.3);
+    filter: blur(20px) brightness(0.35);
     transition:
       filter 0.3s,
       transform 0.3s;
@@ -133,8 +115,10 @@ onBeforeUnmount(() => {
     top: 0;
     width: 100%;
     height: 100%;
-    background-image: radial-gradient(rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0.5) 100%),
-      radial-gradient(rgba(0, 0, 0, 0) 33%, rgba(0, 0, 0, 0.3) 166%);
+    background-image:
+      linear-gradient(90deg, rgba(18, 25, 39, 0.18), rgba(18, 25, 39, 0.02) 46%, rgba(18, 25, 39, 0.28)),
+      radial-gradient(rgba(0, 0, 0, 0) 0, rgba(21, 24, 36, 0.48) 100%),
+      radial-gradient(rgba(0, 0, 0, 0) 33%, rgba(101, 62, 76, 0.28) 166%);
 
     transition: 1.5s;
     &.hidden {
@@ -153,7 +137,7 @@ onBeforeUnmount(() => {
     display: block;
     padding: 20px 26px;
     border-radius: 8px;
-    background-color: #00000030;
+    background-color: rgb(52 62 88 / 42%);
     width: 120px;
     height: 30px;
     display: flex;
@@ -161,7 +145,7 @@ onBeforeUnmount(() => {
     align-items: center;
     &:hover {
       transform: scale(1.05);
-      background-color: #00000060;
+      background-color: rgb(184 124 132 / 36%);
     }
     &:active {
       transform: scale(1);

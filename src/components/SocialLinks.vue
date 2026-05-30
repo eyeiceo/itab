@@ -8,9 +8,9 @@
         :href="item.url"
         target="_blank"
         @mouseenter="socialTip = item.tip"
-        @mouseleave="socialTip = '通过这里联系我吧'"
+        @mouseleave="socialTip = defaultTip"
       >
-        <img class="icon" :src="item.icon" height="24" />
+        <img class="icon" :src="item.icon" width="24" height="24" />
       </a>
     </div>
     <span class="tip">{{ socialTip }}</span>
@@ -21,7 +21,8 @@
 import socialLinks from "@/assets/socialLinks.json";
 
 // 社交链接提示
-const socialTip = ref("通过这里联系我吧");
+const defaultTip = "通过这里联系我吧";
+const socialTip = ref(defaultTip);
 </script>
 
 <style lang="scss" scoped>
@@ -58,8 +59,13 @@ const socialTip = ref("通过这里联系我吧");
     justify-content: center;
     a {
       display: inherit;
+      align-items: center;
+      justify-content: center;
       .icon {
+        width: 24px;
+        height: 24px;
         margin: 0 12px;
+        object-fit: contain;
         transition: transform 0.3s;
         &:hover {
           transform: scale(1.1);

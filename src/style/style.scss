@@ -1,7 +1,7 @@
 /*
-作者: imsyy
-主页：https://www.imsyy.top/
-GitHub：https://github.com/imsyy/home
+作者: site-owner
+主页：可通过 .env 配置
+GitHub：可通过 .env 配置
 版权所有，请勿删除
 */
 
@@ -39,7 +39,7 @@ p {
 
 // 链接悬停效果
 a:hover {
-  color: rgb(57, 159, 255);
+  color: rgb(255, 204, 194);
   text-decoration: underline;
 }
 
@@ -69,8 +69,10 @@ a:hover {
 // 卡片样式
 .cards {
   border-radius: 6px;
-  background-color: #00000040;
-  backdrop-filter: blur(10px);
+  background-color: rgb(39 49 72 / 45%);
+  border: 1px solid rgb(255 209 199 / 16%);
+  box-shadow: 0 16px 50px rgb(9 13 24 / 18%);
+  backdrop-filter: blur(12px) saturate(1.05);
   transform: scale(1);
   transition:
     backdrop-filter 0.3s,
@@ -92,7 +94,7 @@ a:hover {
 
 // 弹窗样式
 .el-message {
-  --el-message-bg-color: #00000040 !important;
+  --el-message-bg-color: rgb(39 49 72 / 62%) !important;
   --el-message-text-color: #efefef !important;
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
@@ -111,9 +113,9 @@ a:hover {
 .el-progress-bar {
   .el-progress-bar__outer {
     border-radius: 6px;
-    background-color: #00000020;
+    background-color: rgb(39 49 72 / 35%);
     .el-progress-bar__inner {
-      background-color: #efefef;
+      background-color: #ffd1c7;
       border-radius: 6px;
       text-align: center;
       font-family: "UnidreamLED";

@@ -37,11 +37,13 @@ const store = mainStore();
 
 // 开启音乐面板按钮显隐
 const openMusicShow = ref(false);
+const fallbackText = import.meta.env.VITE_HITOKOTO_FALLBACK_TEXT || "这里应该显示一句话";
+const fallbackFrom = import.meta.env.VITE_HITOKOTO_FALLBACK_FROM || import.meta.env.VITE_SITE_AUTHOR || "站点作者";
 
 // 一言数据
 const hitokotoData = reactive({
-  text: "这里应该显示一句话",
-  from: "無名",
+  text: fallbackText,
+  from: fallbackFrom,
 });
 
 // 获取一言数据
@@ -58,8 +60,8 @@ const getHitokotoData = async () => {
         fill: "#efefef",
       }),
     });
-    hitokotoData.text = "这里应该显示一句话";
-    hitokotoData.from = "無名";
+    hitokotoData.text = fallbackText;
+    hitokotoData.from = fallbackFrom;
   }
 };
 

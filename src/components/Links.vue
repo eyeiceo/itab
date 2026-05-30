@@ -4,7 +4,7 @@
       <Icon size="20">
         <Link />
       </Icon>
-      <span class="title">网站列表</span>
+      <span class="title">书签</span>
     </div>
     <!-- 网站列表 -->
     <Swiper
@@ -37,19 +37,41 @@
       </SwiperSlide>
       <div class="swiper-pagination" />
     </Swiper>
+    <el-dialog v-model="favoritesOpen" title="我的收藏" width="520px" class="favorites-dialog">
+      <div class="favorite-form">
+        <el-input v-model="favoriteForm.name" placeholder="名称" clearable />
+        <el-input v-model="favoriteForm.link" placeholder="链接，例如 https://ice666.ccwu.cc" clearable />
+        <el-button type="primary" @click="addFavorite">添加</el-button>
+      </div>
+      <div class="favorite-list">
+        <div v-for="(item, index) in favoriteLinks" :key="`${item.name}-${item.link}`" class="favorite-item">
+          <button type="button" @click="openFavorite(item)">
+            <span class="favorite-name text-hidden">{{ item.name }}</span>
+            <span class="favorite-link text-hidden">{{ item.link }}</span>
+          </button>
+          <button type="button" class="remove" @click="removeFavorite(index)">删除</button>
+        </div>
+        <div v-if="!favoriteLinks.length" class="empty">还没有收藏</div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
 import { Icon } from "@vicons/utils";
 // 可前往 https://www.xicons.org 自行挑选并在此处引入
-import { Link, Blog, CompactDisc, Cloud, Compass, Book, Fire, LaptopCode } from "@vicons/fa"; // 注意使用正确的类别
-import { mainStore } from "@/store";
+import { Link, Blog, Bookmark, Cloud, Compass, Globe, Home } from "@vicons/fa"; // 注意使用正确的类别
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Pagination, Mousewheel } from "swiper/modules";
 import siteLinks from "@/assets/siteLinks.json";
 
-const store = mainStore();
+const FAVORITE_STORAGE_KEY = "custom_favorites";
+const favoritesOpen = ref(false);
+const favoriteForm = reactive({
+  name: "",
+  link: "",
+});
+const favoriteLinks = ref([]);
 
 // 计算网站链接
 const siteLinksList = computed(() => {
@@ -64,25 +86,63 @@ const siteLinksList = computed(() => {
 // 网站链接图标
 const siteIcon = {
   Blog,
+  Bookmark,
   Cloud,
-  CompactDisc,
   Compass,
-  Book,
-  Fire,
-  LaptopCode,
+  Globe,
+  Home,
 };
 
 // 链接跳转
 const jumpLink = (data) => {
-  if (data.name === "音乐" && store.musicClick) {
-    if (typeof $openList === "function") $openList();
-  } else {
-    window.open(data.link, "_blank");
+  if (data.action === "favorites") {
+    favoritesOpen.value = true;
+    return;
   }
+  window.open(data.link, "_blank");
+};
+
+const normalizeLink = (link) => {
+  const value = link.trim();
+  if (!value) return "";
+  return /^https?:\/\//.test(value) ? value : `https://${value}`;
+};
+
+const saveFavorites = () => {
+  localStorage.setItem(FAVORITE_STORAGE_KEY, JSON.stringify(favoriteLinks.value));
+};
+
+const addFavorite = () => {
+  const name = favoriteForm.name.trim();
+  const link = normalizeLink(favoriteForm.link);
+  if (!name || !link) {
+    ElMessage({
+      message: "请填写名称和链接",
+      grouping: true,
+    });
+    return;
+  }
+  favoriteLinks.value.unshift({ name, link });
+  favoriteForm.name = "";
+  favoriteForm.link = "";
+  saveFavorites();
+};
+
+const removeFavorite = (index) => {
+  favoriteLinks.value.splice(index, 1);
+  saveFavorites();
+};
+
+const openFavorite = (item) => {
+  window.open(item.link, "_blank");
 };
 
 onMounted(() => {
-  console.log(siteLinks);
+  try {
+    favoriteLinks.value = JSON.parse(localStorage.getItem(FAVORITE_STORAGE_KEY)) || [];
+  } catch {
+    favoriteLinks.value = [];
+  }
 });
 </script>
 
@@ -115,7 +175,7 @@ onMounted(() => {
       align-items: center;
       justify-content: center;
       :deep(.swiper-pagination-bullet) {
-        background-color: #fff;
+        background-color: #ffd1c7;
         width: 20px;
         height: 4px;
         margin: 0 4px;
@@ -145,7 +205,7 @@ onMounted(() => {
 
       &:hover {
         transform: scale(1.02);
-        background: rgb(0 0 0 / 40%);
+        background: rgb(184 124 132 / 32%);
         transition: 0.3s;
       }
 
@@ -178,5 +238,90 @@ onMounted(() => {
       height: 180px;
     }
   }
+  .favorite-form {
+    display: grid;
+    grid-template-columns: 1fr 1.35fr auto;
+    gap: 10px;
+    margin-bottom: 16px;
+    :deep(.el-input__wrapper) {
+      background: rgb(255 255 255 / 14%);
+      border-radius: 6px;
+      box-shadow: none;
+    }
+    :deep(.el-input__inner) {
+      color: #fff;
+    }
+    :deep(.el-input__inner::placeholder) {
+      color: rgb(255 255 255 / 60%);
+    }
+    :deep(.el-button) {
+      border: 0;
+      background: rgb(184 124 132 / 74%);
+      border-radius: 6px;
+    }
+  }
+  .favorite-list {
+    max-height: 300px;
+    overflow: auto;
+    .favorite-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      button {
+        border: 0;
+        color: #fff;
+        cursor: pointer;
+      }
+      button:first-child {
+        min-width: 0;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 12px;
+        border-radius: 6px;
+        background: rgb(255 255 255 / 10%);
+        text-align: left;
+      }
+      .favorite-name {
+        width: 100%;
+        font-size: 15px;
+      }
+      .favorite-link {
+        width: 100%;
+        margin-top: 4px;
+        color: rgb(255 255 255 / 62%);
+        font-size: 12px;
+      }
+      .remove {
+        padding: 9px 12px;
+        border-radius: 6px;
+        background: rgb(255 255 255 / 12%);
+      }
+    }
+    .empty {
+      padding: 28px 0;
+      text-align: center;
+      color: rgb(255 255 255 / 62%);
+    }
+  }
+  @media (max-width: 560px) {
+    .favorite-form {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+:global(.favorites-dialog) {
+  border-radius: 8px;
+  background: rgb(39 49 72 / 82%);
+  border: 1px solid rgb(255 209 199 / 18%);
+  backdrop-filter: blur(18px);
+}
+
+:global(.favorites-dialog .el-dialog__title),
+:global(.favorites-dialog .el-dialog__headerbtn .el-dialog__close) {
+  color: #fff;
 }
 </style>

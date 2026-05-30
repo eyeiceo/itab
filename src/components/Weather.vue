@@ -23,6 +23,7 @@ import { Error } from "@icon-park/vue-next";
 
 // 高德开发者 Key
 const mainKey = import.meta.env.VITE_WEATHER_KEY;
+const fallbackCity = import.meta.env.VITE_WEATHER_CITY || "110000";
 
 // 天气数据
 const weatherData = reactive({
@@ -73,15 +74,16 @@ const getWeatherData = async () => {
       // 获取 Adcode
       const adCode = await getAdcode(mainKey);
       console.log(adCode);
-      if (adCode.infocode !== "10000") {
-        throw "地区查询失败";
-      }
+      const adcode = Array.isArray(adCode.adcode) || !adCode.adcode ? fallbackCity : adCode.adcode;
       weatherData.adCode = {
-        city: adCode.city,
-        adcode: adCode.adcode,
+        city: Array.isArray(adCode.city) || !adCode.city ? "默认地区" : adCode.city,
+        adcode,
       };
       // 获取天气信息
       const result = await getWeather(mainKey, weatherData.adCode.adcode);
+      if (result.infocode !== "10000" || !result.lives?.[0]) {
+        throw result.info || "天气查询失败";
+      }
       weatherData.weather = {
         weather: result.lives[0].weather,
         temperature: result.lives[0].temperature,

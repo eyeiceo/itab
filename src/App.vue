@@ -25,10 +25,6 @@
       >
         <component :is="store.mobileOpenState ? CloseSmall : HamburgerButton" />
       </Icon>
-      <!-- 页脚 -->
-      <Transition name="fade" mode="out-in">
-        <Footer class="f-ter" v-show="!store.backgroundShow && !store.setOpenState" />
-      </Transition>
     </main>
   </Transition>
 </template>
@@ -42,13 +38,17 @@ import Loading from "@/components/Loading.vue";
 import MainLeft from "@/views/Main/Left.vue";
 import MainRight from "@/views/Main/Right.vue";
 import Background from "@/components/Background.vue";
-import Footer from "@/components/Footer.vue";
 import Box from "@/views/Box/index.vue";
 import MoreSet from "@/views/MoreSet/index.vue";
 import cursorInit from "@/utils/cursor.js";
 import config from "@/../package.json";
 
 const store = mainStore();
+const siteName = import.meta.env.VITE_SITE_NAME || config.name;
+const projectRepo = import.meta.env.VITE_PROJECT_REPO || config.github;
+const projectHome = import.meta.env.VITE_SITE_URL
+  ? `https://${import.meta.env.VITE_SITE_URL.replace(/^(https?:\/\/)/, "")}`
+  : config.home;
 
 // 页面宽度
 const getWidth = () => {
@@ -109,7 +109,7 @@ onMounted(() => {
   const styleTitle1 = "font-size: 20px;font-weight: 600;color: rgb(244,167,89);";
   const styleTitle2 = "font-size:12px;color: rgb(244,167,89);";
   const styleContent = "color: rgb(30,152,255);";
-  const title1 = "無名の主页";
+  const title1 = siteName;
   const title2 = `
  _____ __  __  _______     ____     __
 |_   _|  \\/  |/ ____\\ \\   / /\\ \\   / /
@@ -117,7 +117,7 @@ onMounted(() => {
   | | | |\\/| |\\___ \\  \\   /    \\   /
  _| |_| |  | |____) |  | |      | |
 |_____|_|  |_|_____/   |_|      |_|`;
-  const content = `\n\n版本: ${config.version}\n主页: ${config.home}\nGithub: ${config.github}`;
+  const content = `\n\n版本: ${config.version}\n主页: ${projectHome}\nGithub: ${projectRepo}`;
   console.info(`%c${title1} %c${title2} %c${content}`, styleTitle1, styleTitle2, styleContent);
 });
 
@@ -228,12 +228,6 @@ onBeforeUnmount(() => {
         left: calc(50% - 25px);
       }
     }
-    .f-ter {
-      top: 675px; // 721px - 46px
-      @media (min-width: 391px) {
-        padding-left: 6px;
-      }
-    }
   }
   @media (max-width: 390px) {
     overflow-x: auto;
@@ -242,9 +236,6 @@ onBeforeUnmount(() => {
     }
     .menu {
       left: 167.5px; // 391px * 0.5 - 28px
-    }
-    .f-ter {
-      width: 391px;
     }
     @media (min-height: 721px) {
       overflow-y: hidden;
