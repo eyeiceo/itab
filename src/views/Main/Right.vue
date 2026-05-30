@@ -23,7 +23,7 @@ const siteUrl = computed(() => {
   const url = import.meta.env.VITE_SITE_URL;
   const normalizedUrl = url
     ? url.replace(/^(https?:\/\/)/, "")
-    : "ice666.ccwu.cc";
+    : "ovo666.cc.cd";
   const parts = normalizedUrl.split(".");
   return [parts[0], parts.slice(1).join(".")];
 });

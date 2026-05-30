@@ -40,7 +40,7 @@
     <el-dialog v-model="favoritesOpen" title="我的收藏" width="520px" class="favorites-dialog">
       <div class="favorite-form">
         <el-input v-model="favoriteForm.name" placeholder="名称" clearable />
-        <el-input v-model="favoriteForm.link" placeholder="链接，例如 https://ice666.ccwu.cc" clearable />
+        <el-input v-model="favoriteForm.link" placeholder="链接，例如 https://ovo666.cc.cd" clearable />
         <el-button type="primary" @click="addFavorite">添加</el-button>
       </div>
       <div class="favorite-list">
